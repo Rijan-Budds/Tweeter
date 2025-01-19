@@ -2,21 +2,21 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        SocialMedia app = new SocialMedia();
         Scanner scanner = new Scanner(System.in);
-        boolean running = true;
+        SocialMedia app = new SocialMedia();
+        String currentUser = null;
 
-        while (running) {
-            System.out.println("\nWelcome to Social Media Platform!");
-            System.out.println("1. Register");
-            System.out.println("2. Login");
-            System.out.println("3. Exit");
-            System.out.print("Enter your choice: ");
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+        while (true) {
+            if (currentUser == null) {
+                System.out.println("Welcome to Social Media Platform!");
+                System.out.println("1. Register");
+                System.out.println("2. Login");
+                System.out.println("3. Exit");
+                System.out.print("Enter your choice: ");
+                int choice = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
 
-            switch (choice) {
-                case 1:
+                if (choice == 1) {
                     System.out.print("Enter username: ");
                     String username = scanner.nextLine();
                     System.out.print("Enter password: ");
@@ -26,72 +26,50 @@ public class Main {
                     } else {
                         System.out.println("Username already exists!");
                     }
-                    break;
-
-                case 2:
+                } else if (choice == 2) {
                     System.out.print("Enter username: ");
-                    username = scanner.nextLine();
+                    String username = scanner.nextLine();
                     System.out.print("Enter password: ");
-                    password = scanner.nextLine();
+                    String password = scanner.nextLine();
                     if (app.loginUser(username, password)) {
+                        currentUser = username;
                         System.out.println("Login successful!");
-
-                        boolean loggedIn = true;
-                        while (loggedIn) {
-                            System.out.println("\n1. Add Friend");
-                            System.out.println("2. Post Update");
-                            System.out.println("3. View Feed");
-                            System.out.println("4. Logout");
-                            System.out.print("Enter your choice: ");
-                            int loginChoice = scanner.nextInt();
-                            scanner.nextLine(); // Consume newline
-
-                            switch (loginChoice) {
-                                case 1:
-                                    System.out.print("Enter friend's username: ");
-                                    String friendUsername = scanner.nextLine();
-                                    if (app.addFriend(friendUsername)) {
-                                        System.out.println("Friend added successfully!");
-                                    } else {
-                                        System.out.println("Friend not found!");
-                                    }
-                                    break;
-
-                                case 2:
-                                    System.out.print("Enter your post: ");
-                                    String post = scanner.nextLine();
-                                    app.postUpdate(post);
-                                    System.out.println("Post added!");
-                                    break;
-
-                                case 3:
-                                    app.viewFeed();
-                                    break;
-
-                                case 4:
-                                    app.logoutUser();
-                                    loggedIn = false;
-                                    System.out.println("Logged out successfully.");
-                                    break;
-
-                                default:
-                                    System.out.println("Invalid choice!");
-                            }
-                        }
                     } else {
                         System.out.println("Invalid username or password!");
                     }
+                } else if (choice == 3) {
+                    System.out.println("Exiting...");
                     break;
-
-                case 3:
-                    running = false;
-                    System.out.println("Goodbye!");
-                    break;
-
-                default:
+                } else {
                     System.out.println("Invalid choice!");
+                }
+            } else {
+                System.out.println("Post-Login Options:");
+                System.out.println("1. Create Post");
+                System.out.println("2. View Posts");
+                System.out.println("3. Logout");
+                System.out.print("Enter your choice: ");
+                int choice = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+
+                if (choice == 1) {
+                    System.out.print("Enter your post content: ");
+                    String postContent = scanner.nextLine();
+                    app.addPost(currentUser, postContent);
+                    System.out.println("Post created: " + postContent);
+                } else if (choice == 2) {
+                    System.out.println("Displaying all posts:");
+                    for (String post : app.getPosts()) {
+                        System.out.println(post);
+                    }
+                } else if (choice == 3) {
+                    currentUser = null;
+                } else {
+                    System.out.println("Invalid choice!");
+                }
             }
         }
+
         scanner.close();
     }
 }
